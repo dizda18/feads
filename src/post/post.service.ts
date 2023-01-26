@@ -27,10 +27,10 @@ export class PostService {
       where: { createdById: In(ids) },
     });
 
-    return this.mapResultToIds(posts);
+    return this.mapResultToIds(ids, posts);
   }
 
-  private mapResultToIds(posts: Post[]) {
+  private mapResultToIds(userIds: string[], posts: Post[]) {
     const groupedPost: { [key: string]: Post[] } = posts.reduce(
       (groupObject: { [key: string]: Post[] }, post: Post) => {
         if (!groupObject[post.createdById]) {
@@ -42,6 +42,7 @@ export class PostService {
       },
       {},
     );
-    return Object.values(groupedPost);
+
+    return userIds.map((userId) => groupedPost[userId] || []);
   }
 }
