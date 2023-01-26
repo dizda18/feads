@@ -22,7 +22,7 @@ import { UserResolver } from './resolers/user.resolver';
       imports: [DataloaderModule],
       useFactory: (dataloaderService: DataloaderService) => {
         return {
-          autoSchemaFile: true,
+          autoSchemaFile: './schema.gql',
           subscriptions: {
             'graphql-ws': true,
             'subscriptions-transport-ws': true,

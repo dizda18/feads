@@ -37,3 +37,7 @@ input CreatePostDto {
   text: String!
   createdById: String!
 }
+
+type Subscription {
+  postAdded: Post!
+}
