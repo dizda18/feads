@@ -6,7 +6,9 @@ import {
   Args,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
+import { IDataloaders } from 'src/dataloader/dataloader.interface';
 import { Post } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 import { User } from 'src/user/user.entity';
@@ -25,11 +27,18 @@ class UserResolver {
     return this.userService.findById(id);
   }
 
+  @Query((returns) => [User])
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
   @ResolveField()
-  async posts(@Parent() user: User): Promise<Post[]> {
+  async posts(
+    @Parent() user: User,
+    @Context() { loaders }: { loaders: IDataloaders },
+  ): Promise<Post[]> {
     const { id } = user;
-    console.log(JSON.stringify(this.postService.findAll(id)));
-    return this.postService.findAll(id);
+    return loaders.postsLoader.load(id);
   }
 
   @Mutation((returns) => User)

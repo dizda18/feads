@@ -19,6 +19,7 @@ type User {
 
 type Query {
   user(id: String!): User!
+  findAll: [User!]!
   post(id: String!): Post!
 }
 

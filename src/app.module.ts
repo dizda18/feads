@@ -6,6 +6,7 @@ import { GqlModule } from './gql/gql.module';
 // import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { DataloaderModule } from './dataloader/dataloader.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PostModule } from './post/post.module';
     UserModule,
     GqlModule,
     PostModule,
+    DataloaderModule,
     // UserModule,
   ],
   controllers: [AppController],
