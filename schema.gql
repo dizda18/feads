@@ -1,0 +1,38 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Post {
+  id: String!
+  text: String!
+  likedBy: [User!]!
+  createdBy: User!
+}
+
+type User {
+  id: String!
+  firstname: String!
+  lastname: String!
+  likedPosts: [Post!]
+  posts: [Post!]
+}
+
+type Query {
+  user(id: String!): User!
+  post(id: String!): Post!
+}
+
+type Mutation {
+  createUser(user: CreateUserDto!): User!
+  createPost(post: CreatePostDto!): Post!
+}
+
+input CreateUserDto {
+  firstname: String!
+  lastname: String!
+}
+
+input CreatePostDto {
+  text: String!
+  createdById: String!
+}
