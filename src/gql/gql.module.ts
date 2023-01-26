@@ -23,6 +23,10 @@ import { UserResolver } from './resolers/user.resolver';
       useFactory: (dataloaderService: DataloaderService) => {
         return {
           autoSchemaFile: true,
+          subscriptions: {
+            'graphql-ws': true,
+            'subscriptions-transport-ws': true,
+          },
           context: () => ({
             loaders: dataloaderService.getLoaders(),
           }),
@@ -30,10 +34,6 @@ import { UserResolver } from './resolers/user.resolver';
       },
       inject: [DataloaderService],
     }),
-    // GraphQLModule.forRoot<ApolloDriverConfig>({
-    //   driver: ApolloDriver,
-    //   autoSchemaFile: 'schema.gql',
-    // }),
   ],
   providers: [CreateUserDto, CreatePostDto, UserResolver, PostResolver],
 })

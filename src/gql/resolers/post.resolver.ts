@@ -5,12 +5,16 @@ import {
   Parent,
   ResolveField,
   Query,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 import { Post } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { CreatePostDto } from '../dto/createPost.model';
+
+const pubSub = new PubSub();
 
 @Resolver((of) => Post)
 class PostResolver {
@@ -19,22 +23,31 @@ class PostResolver {
     private readonly userService: UserService,
   ) {}
 
+  @Query((returns) => Post)
+  public async post(@Args('id') id: string): Promise<Post> {
+    return this.postService.findById(id);
+  }
+
   @Mutation((returns) => Post)
-  async createPost(
+  public async createPost(
     @Args({ name: 'post', type: () => CreatePostDto }) post: CreatePostDto,
   ): Promise<Post> {
-    return this.postService.createPost(post);
+    const newPost: Promise<Post> = this.postService.createPost(post);
+    pubSub.publish('postAdded', { postAdded: newPost });
+    return newPost;
   }
 
   @ResolveField((returns) => User)
-  async createdBy(@Parent() post: Post): Promise<User> {
+  public async createdBy(@Parent() post: Post): Promise<User> {
     const { createdById } = post;
     return this.userService.findById(createdById);
   }
 
-  @Query((returns) => Post)
-  async post(@Args('id') id: string): Promise<Post> {
-    return this.postService.findById(id);
+  @Subscription((returns) => Post, {
+    name: 'postAdded',
+  })
+  public postAdded() {
+    return pubSub.asyncIterator('postAdded');
   }
 }
 
