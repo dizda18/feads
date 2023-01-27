@@ -15,6 +15,7 @@ type User {
   lastname: String!
   likedPosts: [Post!]
   posts: [Post!]
+  friends: [User!]
 }
 
 type Query {
@@ -25,7 +26,9 @@ type Query {
 
 type Mutation {
   createUser(user: CreateUserDto!): User!
+  addFriend(friendRequest: FriendRequestDto!): User!
   createPost(post: CreatePostDto!): Post!
+  likePost(like: LikePostDto!): Post!
 }
 
 input CreateUserDto {
@@ -33,9 +36,19 @@ input CreateUserDto {
   lastname: String!
 }
 
+input FriendRequestDto {
+  id: String!
+  friendId: String!
+}
+
 input CreatePostDto {
   text: String!
   createdById: String!
+}
+
+input LikePostDto {
+  postId: String!
+  likedBy: String!
 }
 
 type Subscription {

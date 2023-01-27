@@ -5,8 +5,10 @@ import { DataloaderModule } from 'src/dataloader/dataloader.module';
 import { DataloaderService } from 'src/dataloader/dataloader.service';
 import { PostModule } from 'src/post/post.module';
 import { UserModule } from 'src/user/user.module';
+import { FriendRequestDto } from './dto/addFriend.model';
 import { CreatePostDto } from './dto/createPost.model';
 import { CreateUserDto } from './dto/createUser.model';
+import { LikePostDto } from './dto/likePost.model';
 import { PostResolver } from './resolers/post.resolver';
 import { UserResolver } from './resolers/user.resolver';
 
@@ -35,6 +37,13 @@ import { UserResolver } from './resolers/user.resolver';
       inject: [DataloaderService],
     }),
   ],
-  providers: [CreateUserDto, CreatePostDto, UserResolver, PostResolver],
+  providers: [
+    CreateUserDto,
+    CreatePostDto,
+    LikePostDto,
+    FriendRequestDto,
+    UserResolver,
+    PostResolver,
+  ],
 })
 export class GqlModule {}

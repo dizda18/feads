@@ -3,6 +3,7 @@ import { Post } from 'src/post/post.entity';
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -25,11 +26,20 @@ class User {
 
   @ManyToMany(() => Post, (post) => post.likedBy)
   @Field(() => [Post], { nullable: true })
+  @JoinTable()
   likedPosts?: Post[];
 
-  @OneToMany(() => Post, (post) => post.createdBy, {})
+  // @Column({ name: 'liked_posts_id', nullable: true })
+  // likedPostsId?: string;
+
+  @OneToMany(() => Post, (post) => post.createdBy)
   @Field(() => [Post], { nullable: true })
   posts?: Post[];
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  @Field(() => [User], { nullable: true })
+  friends?: User[];
 }
 
 export { User };

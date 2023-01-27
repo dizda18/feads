@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from 'src/gql/dto/createPost.model';
+import { LikePostDto } from 'src/gql/dto/likePost.model';
+import { User } from 'src/user/user.entity';
+import { UserService } from 'src/user/user.service';
 import { In, Repository } from 'typeorm';
 import { Post } from './post.entity';
 
@@ -8,6 +11,7 @@ import { Post } from './post.entity';
 export class PostService {
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
+    private userService: UserService,
   ) {}
 
   public async createPost(post: CreatePostDto): Promise<Post> {
@@ -28,6 +32,20 @@ export class PostService {
     });
 
     return this.mapResultToIds(ids, posts);
+  }
+
+  public async likePost(likePostDto: LikePostDto): Promise<Post> {
+    const user: User = await this.userService.findById(likePostDto.likedBy);
+    const post: Post = await this.postRepository.findOneBy({
+      id: likePostDto.postId,
+    });
+
+    if (!post.likedBy) {
+      post.likedBy = [];
+    }
+    post.likedBy.push(user);
+
+    return await this.postRepository.save(post);
   }
 
   private mapResultToIds(userIds: string[], posts: Post[]) {

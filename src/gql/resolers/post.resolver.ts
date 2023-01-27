@@ -13,6 +13,7 @@ import { PostService } from 'src/post/post.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { CreatePostDto } from '../dto/createPost.model';
+import { LikePostDto } from '../dto/likePost.model';
 
 const pubSub = new PubSub();
 
@@ -33,6 +34,15 @@ class PostResolver {
     @Args({ name: 'post', type: () => CreatePostDto }) post: CreatePostDto,
   ): Promise<Post> {
     const newPost: Promise<Post> = this.postService.createPost(post);
+    pubSub.publish('postAdded', { postAdded: newPost });
+    return newPost;
+  }
+
+  @Mutation((returns) => Post)
+  public async likePost(
+    @Args({ name: 'like', type: () => LikePostDto }) post: LikePostDto,
+  ): Promise<Post> {
+    const newPost: Promise<Post> = this.postService.likePost(post);
     pubSub.publish('postAdded', { postAdded: newPost });
     return newPost;
   }

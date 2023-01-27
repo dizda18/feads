@@ -13,6 +13,7 @@ import { Post } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { FriendRequestDto } from '../dto/addFriend.model';
 import { CreateUserDto } from '../dto/createUser.model';
 
 @Resolver((of) => User)
@@ -38,7 +39,25 @@ class UserResolver {
     @Context() { loaders }: { loaders: IDataloaders },
   ): Promise<Post[]> {
     const { id } = user;
-    return loaders.postsLoader.load(id);
+    return loaders.postsByUserIdLoader.load(id);
+  }
+
+  @ResolveField()
+  async friends(
+    @Parent() user: User,
+    @Context() { loaders }: { loaders: IDataloaders },
+  ): Promise<User[]> {
+    const { id } = user;
+    return loaders.friendsByUserIdLoader.load(id);
+  }
+
+  @ResolveField()
+  async likedPosts(
+    @Parent() user: User,
+    @Context() { loaders }: { loaders: IDataloaders },
+  ): Promise<Post[]> {
+    const { id } = user;
+    return loaders.likedPostsByUserIdLoader.load(id);
   }
 
   @Mutation((returns) => User)
@@ -46,6 +65,14 @@ class UserResolver {
     @Args({ name: 'user', type: () => CreateUserDto }) user: CreateUserDto,
   ): Promise<User> {
     return this.userService.create(user);
+  }
+
+  @Mutation((returns) => User)
+  async addFriend(
+    @Args({ name: 'friendRequest', type: () => FriendRequestDto })
+    friendRequest: FriendRequestDto,
+  ): Promise<User> {
+    return this.userService.addFriend(friendRequest);
   }
 }
 
